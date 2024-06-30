@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <!-- 1. namespace_on -->
+  <!-- <script src="./dist/components.js"></script>
+  <script src="./dist/page.js"></script> -->
+
+  <!-- 2. namespace_lower -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.js"></script>
+  <script src="./dist/page.js"></script>
+</head>
+<body>
+  <script>
+    // // 1. namespace_on
+    // new Home.Page();
+    // 2.namespace_lower
+    require(["namespace_lower/page"], function(page) {
+      new page.default();
+    })
+
+  </script>
+</body>
+</html>
