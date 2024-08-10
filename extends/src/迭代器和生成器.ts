@@ -6,7 +6,7 @@ function* gen() {
   yield 'five'
 }
 
-const numbers = gen()
+const numbers_1 = gen()
 // console.log(numbers)
 // console.log(numbers.next())
 // console.log(numbers.next())

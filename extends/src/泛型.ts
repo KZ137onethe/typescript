@@ -16,8 +16,8 @@ fn(1, 2)
 
 // 通过类型别名定义泛型
 type A<T> = number | string | T
-let a: A<boolean> = false
-a = 123
+let a_1: A<boolean> = false
+a_1 = 123
 
 // 使用多个泛型
 function add<T, K>(a: T, b: K): Array<T | K> {
