@@ -1,0 +1,12 @@
+{
+  "name": "studytypescript",
+  "version": "1.0.0",
+  "description": "study typescript guide",
+  "main": "demo.ts",
+  "auther": "guanhai",
+  "scripts": {
+    "clean:js": "powershell -command \"Get-ChildItem -Path . -Filter *.js -Recurse -Exclude node_modules | Where-Object { $_.FullName -notlike '*node_modules*' } | Remove-Item -Force\""
+  },
+  "keywords": [],
+  "license": "ISC"
+}

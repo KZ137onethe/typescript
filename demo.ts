@@ -34,7 +34,7 @@ const getTotal: () => number = () => {
 }
 
 // type annotation 类型注解，我们来告诉 TS 变量是什么类型
-// type inference 类型推断，TS 会自动的去尝试分析变量的类型
+// type inference 类型推断，TS 会自动地去尝试分析变量的类型
 // 如果 TS 能够自动分析变量类型，我们就什么也不需要做了
 // 如果 TS 无法分析变量类型的话，我们就需要使用类型注解
 
@@ -134,7 +134,7 @@ const teacherInfo: [string, string, number] = ["Dell", "Alice", 88]; // 这里�
 const teacherList: [string, string, number][] = [
   ["dell", "male", 18],
   ["sun", "female", 22],
-  ["jeny", "female", 28],
+  ["jenny", "female", 28],
 ]
 
 //  interface 接口
@@ -370,4 +370,3 @@ class Square extends Geom {
     return 4 * this.width;
   }
 }
-
