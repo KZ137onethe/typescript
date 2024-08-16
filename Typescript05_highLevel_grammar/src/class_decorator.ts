@@ -1,3 +1,14 @@
+function testDecorator(constructor: any) {
+  constructor.prototype.getName = () => {
+    console.log("dell");
+  }
+}
+
+@testDecorator
+class TestOne {}
+
+const test1 = new TestOne();
+(test1 as any).getName();
 
 function testDecoratorTwo<T extends new (...args: any[]) => {}>(constructor: T) {
   return class extends constructor {

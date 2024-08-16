@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import {CustomError, APIError} from './customError';
 
 function riskyOperation(value: number) {

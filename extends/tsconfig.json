@@ -7,7 +7,7 @@
     // 打印诊断信息
     "diagnostics":true,
     // 编译语言的版本
-    "target": "ES6",
+    "target": "ESNext",
     // 生成代码的模板标准
     "module": "ESNext",
     // TS 需要引入的库，即声明文件，es5默认引用了dom、es5、scripthost,如需要使用es的高级版本特性，通常需要配置，如es8的数组新特性需要引入"ES2019.Array"
@@ -65,7 +65,7 @@
     // 不允许this有隐式的any类型
     "noImplicitThis": true,
     // 检查只声明、未使用的局部变量(只提示不报错)
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     // 检查未使用的函数参数(只提示不报错)
     "noUnusedParameters": false,
     // 防止switch语句贯穿(即如果没有break语句后面不会执行)
@@ -86,6 +86,9 @@
       ],
       "@/*": [
         "./src"
+      ],
+      "namespace/*": [
+        "./namespace"
       ]
     },
     // 用于指定多个项目根目录的配置项，将多个目录放在一个虚拟目录下，用于运行时，即编译后引入文件的位置可能发生变化，这些设置可以虚拟src和out在同一个目录下，不用再去改变路径也不会报错
@@ -94,16 +97,17 @@
     "listEmittedFiles": true,
     // 打印编译后的文件
     "listFiles": false,
-    // 装饰器特性
+    // 装饰器的实验特性
     "experimentalDecorators": true,
+    // 装饰器的声明触发某些类型的元数据的实验性支持
     "emitDecoratorMetadata": true
-  }
+  },
   // 指定一个匹配列表（属于自动指定该路径下的所有ts相关文件）
-  // "include": [
-  //   "src/**/*",
-  //   "namespace/*",
-  //   "types/*"
-  // ],
+   "include": [
+     "src/**/*",
+     "namespace/*",
+     "types/*"
+   ],
   // 指定一个排除列表（include的反向操作）
   // "exclude": [
   //   "demo.ts"
@@ -111,6 +115,13 @@
   // 指定哪些文件使用该配置（属于手动一个个指定文件）
   // "files": [
   //   "demo.ts"
-  // ]
+  // ],
+  "ts-node": {
+    // these options are overrides used only by ts-node
+    // same as the --compilerOptions flag and the TS_NODE_COMPILER_OPTIONS environment variable
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  }
 }
 

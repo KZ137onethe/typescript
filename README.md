@@ -10,1011 +10,1002 @@
 
 1. [TypeScript 中文网](https://ts.nodejs.cn/)
 
->		当前版本v5.5
-
-1. [TypeScript](https://www.typescriptlang.org/)
-2. [小满zs的TypeScript的收藏集](https://blog.csdn.net/qq1195566313/category_11559497.html?spm=1001.2014.3001.5515)
-   训练场：[TypeScript Playground](https://www.typescriptlang.org/play/)
-   安装
-
-  ```bash
-  // 项目内安装
-  npm install typescript --save-dev
-  // 全局安装
-  npm install -g typescript
-  // 安装其他依赖
-  /**
-	* 1. @types/node -- 支持node.js环境
-	* 2. ts-node -- 可以直接运行TypeScript文件
-	*/
-  npm install @types/node @ts-node -D
-  ```
-
-## 类型
-
-#### 基础类型
-
-```Typescript
-// string  
-// number  
-// bigint  
-// boolean  
-// null  
-// undefined  
-const teacherName: string = "Dell";  
-const count: number = 123;  
-const population: bigint = BigInt("1234567890123456789012345678901234567890");  
-const flag: boolean = true  
-const a: null = null;  
-const b: undefined = undefined;
-```
-
-**symbol 类型**
-[学习TypeScrip13（symbol类型）](https://xiaoman.blog.csdn.net/article/details/122463630)
-
-#### 任意类型
-
-* **any 类型**
-
-> any 类型代表任何值，但会失去TypeScript类型检测的作用
-
-* **unknown 类型**
-
-> unknown 类型代表任何值，但使用 unknown 类型的值做任何事情都是不合法的。这类似于 any 类型，但更安全
-
-```TypeScript
-function f1(a: any) {
-	a.b(); // OK
-}
-function f2(a: unknown) {
-	a.b(); // 'a' is of type 'unknown'.
-}
-```
-
-* any 和 unknown 的区别？
-
-1. 使用 any 做任何事情都是合法的，使用 unknown 类型的值做任何事情都是不合法的
-2. unknown 类型 是 top type，不能作为子类型，但 any 类型没有这个问题
-
-```TypeScript
-// 这样写会报错unknow类型不能作为子类型只能作为父类型 any 可以作为父类型和子类型
-// unknown类型不能赋值给其他类型
-let name1: unknown = '123'
-let name2: string = name1 
-// 这样就没问题 any类型是可以的
-let name3: any = '123'
-let name4: string = name3
-```
-
-#### 字面类型
-
-TODO
-
-#### 接口与对象类型
-
-*  **接口类型**
-
-> 可以通过 interface 关键字约束对象类型
-
-```TypeScript
-// ?. 可选  
-// readonly 只读  
-// [xxx: 类型] 任意类型  
-interface Person {
-	name: string
-    age?: string,  
-    readonly birthDay: string,  
-    [propName: string]: any,  
-    fn(): void,  
-}
-// 使用 extends
-interface Teacher extends Person {
-	school: string,
-	teachAge: number
-}
-let tom: Teacher = {
-	name: 'tom',
-	age: 24,
-	birthDay: "2000-09-08",
-	school: 'xxx中学',
-	teachAge: 2,
-	fn() {
-		console.log('fn')
-	},
-}
-```
-
-* **对象类型**
-
-> 特殊类型 object 指的是任何非基础值（ string、number、bigint、boolean、symbol、null 或 undefined）。这与空对象类型 { } 不同，也与全局类型 Object 不同。你很可能永远不会使用 Object。
-
-#### 数组和元组类型
-
-* **数组类型**
-
-```TypeScript
-// 类型[]  
-// arguments类数组: IArguments  
-// 泛型数组  
-let arr: number[] = [1, 2, 3, 4]  
-let arr2: (number | string)[] = [1, "2", 3, "ok"]
-function fn(...args: number[]) {  
-    return arguments  
-}
-let arr3: Array<string> = ['1', '2', '3']  
-// IArguments 是 TypeSCript 已经定义好的 => 类似：  
-interface IArguments {  
-    [index: number]: any;  
-    length: number;  
-    callee: Function;  
-}
-```
-
-* **元组类型**
-
-> 元组（Tuple）是固定数量的不同类型的元素的组合
-
-```TypeScript
-const teacherInfo: [string, string, number] = ["Dell", "Alice", 88];  
-const teacherInfo: readonly [string, string, number, number, boolean] = ["Tom", "male", 28, 5, true];
-```
-
-> 应用场景：csv格式的数据等，示例：
-
-```TypeScript
-const teacherList: [string, string, number][] = [
-  ["dell", "male", 18],
-  ["sun", "female", 22],
-  ["jeny", "female", 28],
-]
-```
-
-#### never和void类型
-
-* **never类型**
-
-> TypeScript 将使用 never 类型来表示不应该存在的状态
-
-```TypeScript
-function error(message: string): never  {  
-    throw new Error(message)  
-}
-function loop(): never {  
-    while(true){}  
-}
-```
-
-<u>应用场景</u>:
-...
-
-* **void类型**
-
-> 表示不返回值的函数的返回值，只要函数没有任何 `return` 语句，或者没有从这些返回语句返回任何显式值，它就是推断类型
-
-```TypeScript
-function log(msg): void {  
-    console.log(msg)  
-}
-```
-
-#### 枚举类型
-
-* **特性:**
-
-1. 自增长特性
-
-   > 常量成员从第一个成员开始自动递增。如果没有显式地为成员赋值，它将从 0 开始，并且后续的成员会自动递增。
-
-   ``````typescript
-   enum Direction {  
-   	North, // 0  
-   	East,  // 1  
-   	South, // 2  
-   	West   // 3  
-   }  
-   enum Colors {  
-   	red = 1,  
-   	green = "abc",  
-   	orange = 3,  
-   	pink, // 4  
-   	blue, // 5  
-   }
-   ``````
-
-2. 反向映射特性
-
-   > 除了为成员创建具有属性名称的对象外，**数字枚举成员**还获得从枚举值到枚举名称的反向映射。
-
-   ```typescript
-   enum Enum {  
-     A, // 0  
-   }  
-   let a = Enum.A;  
-   let nameOfA = Enum[a];
-   ```
-
-* **场景：**
-
-	- 数字枚举
-
-  ```TypeScript
-  enum Types {  
-  	Red, // 0  
-  	Green = 5, // 5  
-  	Blue // 6  
-  }  
-  console.log(Types.Red) // 0
-  ```
-
-	- 字符串枚举
-
-	  > 在一个字符串枚举里，每个成员都必须用字符串字面量，或另外一个字符串枚举成员进行初始化。
-
-	- 异构枚举
-
-	  > 枚举可以混合字符串和数字成员
-
-	- 接口枚举
-
-	  ```typescript
-      enum Types {  
-          yyds,  
-          dddd  
-      }  
-      interface A {  
-          red: Types.yyds  
-      }  
-      let obj: A = {  
-          red: Types.yyds  
-      }
-      ```
-
-	- const枚举
-
-	  > 大多数情况下，枚举是十分有效的方案。 然而在某些情况下需求很严格。 为了避免在额外生成的代码上的开销和额外的非直接的对枚举成员的访问，我们可以使用 `const`枚举。 常量枚举通过在枚举上使用 const 修饰符来定义。且const 声明编译后为常量。
-
-	  ```typescript
-      const enum Types {
-        No = "No",
-        Yes = 1,
-      }
-      ```
-
-#### 类型推论和类型别名
-
-* **类型推论**
-
-  > TypeScript 会在没有明确的指定类型的时候推测出一个类型，这就是**类型推论**当变量被类型推断为一种类型时，不能够在给变量赋值的时候给别的类型如果你声明变量没有定义类型也没有赋值这时候TS会推断成any类型
-
-  ```ts
-  let a = "123456" //  被类型推断为string
-  a = 123456 // 不能将类型“number”分配给类型“string”。ts(2322)
-  let value // 被类型推断为any
-  ```
-
-* **类型别名**
-
-  > 通过 type 使用同一个类型并用一个名称引用它，叫做类型别名
-
-  ```ts
-  // 基础用法
-  type str = string
-  type strFn = () => string
-  type strOrNum = string | number
-  type success = 'ok' | 1 | true
-  type FnType = {
-      name: string,
-      age: number,
-      sex: string,
-      teachAge: number,
-  }
-  ```
-
-<u>类型别名 type 和接口 interface 的区别：</u>
-
-1. type不能重复命名，重复命名 interface 会合并
-2. interface 用于约束对象（函数也属于对象），type 没有这个限制
-3. 将两个及其以上的类型合并时，interface 往往通过继承来实现（也可以通过交叉类型&），而 type 通过联合类型|来实现
-4. type 可以定义联合类型和可以使用一些操作符，而 interface 不行
-
-```TypeScript
-// 重复命名的区别
-// 类型别名不能重复命名
-type abc = number
-type abc = string  // Duplicate identifier 'abc'.(2300)
-// 重复命名 interface 会合并
-interface FooFn {
-    school: string,
-    info: object,
-}
-interface FooFn {
-    age: number
-}
-let highSchool: FooFn = {
-    school: "xxx中学",
-    info: {  
-    },
-    age: 12
-}
-// 类型合并的区别
-interface Person {
-    name: string,
-    age: number,
-}
-interface Teacher extends Person {
-    school: string,
-    teachAge: number
-}
-type personType = {
-    name: string,
-    age: number,
-}
-type teacherType = {
-    school: string,
-    teachAge: number
-} & personType
-let tom: Teacher = {
-    name: 'tom',
-    age: 27,
-    school: "xxx",
-    teachAge: 4
-}
-let mary: teacherType = {
-    name: 'mary',
-    age: 34,
-    school: 'xxx',
-    teachAge:9
-}
-// type 使用操作符
-let random1 = 1
-// 获取变量的类型
-type n = typeof random1
-// 获取interface的属性名 
-type keyOfType = keyof Teacher // "name" | "age" | "school" | "teachAge"
-type IsNumber<T> = T extends number ? true : false
-class NewNumber extends Number {}
-let result: IsNumber<NewNumber> = false; // 只能是false
-console.log(result)
-```
-
-#### 联合类型和交叉类型
-
-* **联合类型**
-
-  > 联合类型是由两种或多种其他类型组成的类型，表示可能是这些类型中的任何一种的值。我们将这些类型中的每一种都称为联合的成员。
-
-  ```ts
-  let a: number | string = "123"
-  a = 123
-  function printId(id: number | string) {
-  	console.log("Your ID is: " + id);
-  }
-  printId("202")
-  printId(101)
-  ```
-
-如果你有一个联合类型的值，你如何处理它？TypeScript 只有在对联合的每个成员都有效的情况下才允许操作。例如，如果你有联合 string | number，则不能使用仅在 string 上可用的方法：
-
-```TypeScript
-function printId(id: number | string) {
-	console.log(id.toUpperCase()) // 将会报错
-}
-```
-
-通过TypeScript的类型推论来缩小联合，比如：
-
-```TypeScript
-function printId(id: number | string) {
-	if(typeof id === "string") {
-		console.log(id.toUpperCase());
-	} else {
-		console.log(id)
-	}
-}
-```
-
-* **交叉类型**
-
-  > 交叉类型是使用 & 运算符定义的
-
-  ```ts
-  interface Colorful {
-  	color: string;
-  }
-  interface Circle {
-  	radius: number;
-  }
-  type ColorfulCircle = Colorful & Circle
-  function draw(obj: ColorfulCircle) {
-  	console.log(obj.color, obj.radius)
-  }
-  draw({ color: 'red', radius: 10 })
-  // 理论上可以通过交叉类型把类型别名和接口进行混用,但可读性有点不好 - 只要明白你在做什么就行.png
-  // 数组和字符串都有slice方法，所以下面的交集类型 b 是有效的
-  type a = any[] | string
-  interface fnType {
-      slice: Function
-  }
-  type b = a & fnType
-  let c: b = [1, 2, 3, 4]
-  console.log(c.slice(2))
-  ```
-
-#### 类型断言
-
-> 有时候，你非常清楚一个值的类型信息但TypeScript无法知道的值类型的信息，这时候就可以`as`使用**类型断言**
-
-```TypeScript
-// 当你清楚获取的元素必然是 HTMLCanvasElement
-const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
-// 类型断言的另一种写法（尖括号写法）
-interface Person { name: string; age: number; } 
-let people: any[] = [ 
-	{ name: "Alice", age: 25 }, 
-	{ name: "Bob", age: 30 }, 
-	{ name: "Charlie", age: 35 } 
-];
-let names:string[] = people.map(person => (<Person>person).name);
-console.log(names);
-// 当TypeScript明确知道（类型推论）一个值的类型时使用类型断言将会报错
-// Conversion of type 'number' to type 'boolean' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.(2352)
-const value = 123 as boolean 
-// 当你故意将一种类型断言为另一种类型时，这其实是在欺骗TypeScript，没有任何意义
-function fn(param: any): boolean {
-	return param as boolean
-}
-console.log(fn('123'))
-```
-
-> TypeScript 只允许类型断言转换为更具体或更不具体的类型版本。
-> 有时，此规则可能过于保守，并且不允许可能有效的更复杂的强制转换。如果发生这种情况，你可以使用两个断言，然后是所需的类型：
-
-```TypeScript
-// declare 是 TypeScript 中用于声明类型和接口、模块、全局变量和函数等。
-declare const expr: any;
-type T = { a: 1, b: 2, c:3 };
-const a = expr as any as T; // 或者 expr as unknown as T
-```
-
-使用类型断言缩小类型
-
-```TypeScript
-interface A {
-	run: string
-}
-interface B {
-	build: string
-}
-function fn(type: A | B): void {
-	console.log((type as A).run);
-}
-```
-
-> 类型断言编译后被编译器删除，不会影响代码的运行时行为。
-
-**非空断言运算符 !**
-
-> 用于告诉编译器某个表达式不会是 null 或 undefined。当你确定某个值一定不会是 `null` 或 `undefined` 时，可以使用这个运算符来避免编译器发出错误或警告。
-
-```TypeScript
-interface User {
-    name?: string;
-    age?: number;
-}
-const getUser = (): User => {
-    return { name: "John", age: 30 };
-};
-const user = getUser();
-const userName = user.name!;
-console.log(userName.toUpperCase()); // 输出: John
-```
-
-#### 泛型
-
-> 也称之为"动态类型"
-
-```TypeScript
-function returnArray<T>(a: T, b: T): Array<T> {
-	return [a, b]
-}
-// 使用类型参数推断
-returnArray(1, 2)
-returnArray('tom', 'bob')
-// 传递类型参数
-returnArray<number | string>(1, '2')
-// 使用多个参数
-function logLen<T, K, L>(param1: T[], param2: K[], param3: L[]): number {
-    return ([] as any[]).concat(param1).concat(param2).concat(param3).length
-}
-logLen(['q', 'w', 'e', 'r'], [ 98, 103, 42, 5], [false, true, false])
-// 使用泛型参数默认值，为什么有默认值？
-function getRandomValue<T = number>(params: T[]): T {
-	return Math.round(Math.random() * params.length)
-}
-// 在类型别名和接口中使用泛型
-type A<T> = number | string | T
-interface Box<T> {
-	content: T,
-	size: number
-}
-let abc: A<boolean> = true
-let stringBox: Box<string> = {
-	content: "Hello World!",
-	size: 10
-}
-// 使用泛型类
-class GenericBox<T> {
-    constructor(private content: T) {};
-    getContent(): T {
-        return this.content
-    }
-    setContent(value: T): void {
-        this.content = value
-    }
-}
-```
-
-TODO： TypeScript 类型推断泛型？
-**泛型类型**
-TODO
-**泛型的类型约束**
-
-> 意思是泛型受到约束
-
-```TypeScript
-// 通过 extends 继承父类来实现约束
-function slice<T extends String | any[]>(param: T) {
-    return param.slice(0, Math.floor(param.length / 2))
-}
-slice('3.1415926')
-slice(['q', 'w', 'e', 'r', 't', 'y'])
-interface Point {
-	x: number,
-	y: number
-}
-// 通过接口来类型约束
-function getPointDistance<T extends Point>(point1: T, point2: T): number {
-	return Math.sqrt(Math.pow(point1.x - point2.x) + Math.pow(point1.y - point2.y))
-}
-// 在泛型约束中使用类型参数 
-// keyof 运算符采用对象类型并生成其键的字符串或数字字面联合
-function getValue<T extends object, K extends keyof T>(obj: T, arttribute: K) {
-	return obj[arttribute]
-}
-```
-
-## 函数和类
-
-#### 函数扩展
-
-* **函数参数**
-
-  ```ts
-  // 1. 参数不能多传，也不能少传 必须按照约定的类型来
-  // 2. 函数可选参数?
-  // 3. 函数参数的默认值
-  function fn(name: string, age:number, teachAge?: number, isMale: boolean = true，callback: Function): string {
-  	callback()
-  	return name + age
-  }
-  // 剩余参数
-  function foo(...args: any[]): string {
-  	return args.join("")
-  }
-  const a = [2, "babana", 32, "kebi"]
-  console.log(foo(...a))
-  // 参数解构
-  function getMaxValue({ value1, value2, value3 }: { value1: number, value2: number, value3: number}): number {
-  	return Math.max(value1, value2, value3)
-  }
-  // 使用箭头函数
-  const getTotal: (...params: number[]) => number = (...params) => {
-  	return params.reduce((x, y) => x + y, params[0]);
-  }
-  const getTotal2 = (...params:  number[]): number => {
-  	return params.reduce((x, y) => x + y, params[0]);
-  }
-  ```
-
-* **接口定义函数**
-
-  ```ts
-  // 定义参数 num 和 num2  ：后面定义返回值的类型
-  // 只能用于箭头函数上面
-  interface Add {
-      (num:  number, num2: number): number
-  }
-  const fn: Add = (num: number, num2: number): number => {
-      return num + num2
-  }
-  fn(5, 5)
-  // 定义函数参数和返回值
-  interface User{
-      name: string;
-      age: number;
-  }
-  function getUserInfo(user: User): User {
-    return user
-  }
-  ```
-
-* **函数重载**
-
-  > 重载是方法名字相同，而参数不同，返回类型可以相同也可以不同。
-  > 可以通过编写**重载签名**来指定一个可以以不同方式调用的函数，然后通过编写**函数主体**来实现签名
-  > **实现签名还必须与重载签名兼容**。但如果TypeScript没有检测出来，将不会报错...
-
-  ```ts
-  interface FnType {
-      [propname: string]: any
-  }
-  // 重载签名
-  function fn(obj: FnType, ...attr: string[]): void
-  function fn(...params: [string, number, boolean]): void
-  // 函数主体来实现签名
-  function fn(...params: any[]): void {
-      if(typeof params[0] === "string") {
-          console.log("name:", params[0], "age:", params[1], "is male:", params[2])
-      } else {
-          for(let obj = params[0], i = 1; i < params.length; i++){
-              console.log(obj[params[i]]);
-          }
-      }
-  }
-  fn('tom', 24, true)
-  fn({ name: 'mary', 'age': 32}, 'name', 'age')
-  ```
-
-* **使用this**
-  TODO
-
-#### 类
-
-> 关键字：[class](https://web.nodejs.cn/en-us/docs/web/javascript/reference/classes/)
-> ES6提供了更接近传统语言的写法，引入了Class（类）这个概念，作为对象的模板。通过class关键字，可以定义类。基本上，ES6的class可以看作只是一个语法糖，它的绝大部分功能，ES5都可以做到，新的class写法只是让对象原型的写法更加清晰、更像面向对象编程的语法而已。上面的代码用ES6的“类”改写，就是下面这样。
-
-```TypeScript
-// 在TypeScript是不允许直接在constructor 定义变量的 需要在constructor上面先声明
-class Person {
-	name: string;
-	age: number
-	constructor(name: string, age: number) {
-		this.name = name
-		this.age = age
-	}
-	run() {
-		console.log(this.name, this.age)
-	}
-}
-// 可以简写 public 是默认修饰符
-class Person1 {
-	constructor(public name: string, public age: number) {}
-	run() {
-		console.log(this.name, this.age)
-	}
-}
-```
-
-* **类的修饰符**
-
-	* public 公共
-	  可以让你定义的变量 内部访问（继承的子类也能访问） 也可以外部访问 如果不写默认就是public
-
-	  ```ts
-      class Person {
-          constructor(public name: string, public age: number) {}
-          log() {
-              console.log(this.name, this.age)
-          }
-      }
-      const tom = new Person('Tom', 23)
-      console.log(tom.log()) // 内部访问
-      console.log(tom.name, tom.age) // 外部访问
-      ```
-
-	* private 私有
-	  代表定义的变量私有的只能在内部访问 不能在外部访问
-
-	  ```ts
-      class Person {
-          constructor(public name: string, public age: number, private looks: string) {}
-          log() {
-              console.log(this.name, this.age)
-          }
-          logPrivateLooks() {
-              console.log(this.looks)
-          }
-      }
-      const tom = new Person('Tom', 23, "good")
-      console.log(tom.logPrivateLooks()) // 内部访问
-      console.log(tom.looks) // 属性“looks”为私有属性，只能在类“Person1”中访问。ts(2341)
-      ```
-
-	* protected 保护
-	  代表定义的变量私有的只能在内部和继承的子类中访问 不能在外部访问
-
-	  ```ts
-      class Person {
-          constructor(public school: string, protected name: string, protected age: number, private looks: string) {}
-          log() {
-              console.log(this.name, this.age)
-          }
-          logSchool() {
-              console.log(this.school)
-          }
-          logPrivateLooks() {
-              console.log(this.looks)
-          }
-      }
-      
-      class Teacher extends Person {
-          constructor(school: string, name: string, age: number, looks: string, public teachAge: number) {
-              super(school, name, age, looks)
-          }
-          log() {
-              super.log()
-          }
-          logSchool() {
-              super.logSchool()
-          }
-          logLooks() {
-            console.log(this.looks)
-          }
-      }
-      const tom = new Teacher('xx中学', 'Tom', 23, 'good', 1)
-      tom.log() // 在继承的子类中访问父类的 protected 属性
-      tom.logSchool() // 在继承的子类中访问父类的 public 属性
-      tom.logLooks() //  在继承的子类中访问父类的 private 属性
-      ```
-
-* **类继承**
-
-  > implements 从句
-  > 通过使用 implements 子句来检查一个类是否满足特定的 interface。如果一个类未能正确实现它，则会触发错误
-
-  ```ts
-  // 使用
-  interface Pingable {
-    ping(): void;
-  }
-  class Socket implements Pingable {
-    ping () {
-      console.log("ping!")
-    }
-  }
-  // 通过 implements 子句检查多个接口
-  interface Depthable {
-    depth: number
-  }
-  class Sonar implements Pingable, Depthable {
-    depth: number
-    constructor(depth: number) {
-      this.depth = depth
-    }
-    ping() {
-      console.log("ping!")
-    }
-  }
-  // implements 子句检查类是否满足于特定的接口，但不会改变类的类型或其方法
-  interface Userable {
-    name: string,
-    check(): void,
-  }
-  class UserChecker implements Userable {
-    static checkName: RegExp = /^[A-Za-z0-9]{8,12}$/
-    name: string
-    constructor(name: string){
-      this.name = name
-    }
-    check() {
-      return UserChecker.checkName.test(this.name)
-    }
-  }
-  ```
-
-
-
-* **extends**
-
-  > 关键字介绍：[extends](https://web.nodejs.cn/en-us/docs/web/javascript/reference/classes/extends/)
-  > 通过extends来创建另一个类的子类
-
-  ```ts
-  // 使用
-  class Person {
-      a: number
-      constructor(public name: string) {
-          this.a = Math.round(Math.random() * 10)
-      }
-      move() {
-          console.log("Moving along!");
-      }
-  }
-  
-  class Eat extends Person {
-      constructor(public name: string, private readonly food: string) {
-          super(name)
-      }
-      dirnk(times: number) {
-          for (let i = 0; i < times; i++) {
-              console.log(`drink ${this.food}`);
-          }
-      }
-  }
-  
-  const tom = new Eat("tom", "water")
-  tom.move()
-  tom.dirnk(3)
-  console.log(tom)
-  // 覆盖方法, 需要遵守契约
-  class Errors {
-  	print(message: string): void {
-  		console.log(message)
-  	}
-  }
-  class syntaxError extends Errors {
-  	print(message: string, type?: string): void | never {
-  		if(!type) {
-  			super.print(message)
-  		} else {
-  			console.log(`Syntax Error, type: ${type}, info: ${message}`)
-  		}
-  	}
-  }
-  // 子类通过declare可以声明更准确的类型，仅当 target >= ES2022` 或useDefineForClassFields为 true 时
-  interface Animal {
-    dateOfBirth: any;
-  }
-  interface Dog extends Animal {
-    breed: any;
-  }
-  class AnimalHouse {
-    resident: Animal;
-    constructor(animal: Animal) {
-      this.resident = animal;
-    }
-  }
-  class DogHouse extends AnimalHouse {
-    // Does not emit JavaScript code,
-    // only ensures the types are correct
-    declare resident: Dog;
-    constructor(dog: Dog) {
-      super(dog);
-    }
-  }
-  const a = new DogHouse({ dateOfBirth: "2020", breed: "中华田园犬" })
-  console.log(a)
-  ```
-
-* **抽象类**
-
-  > abstract 所定义的就是抽象类
-
-  ```ts
-  // 1. abstract不能用作实例化
-  // 2. abstract 所定义的方法 只能进行一个描述，不能进行一个实现, 且在派生类中药实现
-  abstract class B {
-    constructor(public name?: string) {}
-    getName() {
-      return this.name
-    }
-    abstract init(name: string): void
-  }
-  // 派生类
-  class React extends B {
-    constructor() {
-      super()
-    }
-    init(name: string) {}
-    setName (name: string) {
-      this.name = name
-    }
-  }
-  const react = new React()
-  react.setName("guanhai")
-  console.log(react.getName())
-  ```
-
-## 其他
-
-#### 命名空间
-
-TypeScript 中使用命名空间（以前是 “内部模块”）来组织代码的各种方法。
-
-1. 嵌套
-2. 抽离
-3. 使用别名来简化命名
-4. 合并
-
-`customValidator.ts`
-
-```TypeScript
-export namespace customValidator {
-  interface StringValidator {
-    isAcceptable(s: string): boolean
-  }
-  export class ZipCodeValidator implements StringValidator {
-    static checkRegExp =  /^[0-9]{5}$/
-    isAcceptable(s: string) {
-      return ZipCodeValidator.checkRegExp.test(s);
-    }
-  }
-}
-```
-
-`test.ts`
-
-```TypeScript
-import { customValidator } from "../namespace/customValidator"
-import ZipCodeValidator = customValidator.ZipCodeValidator
-export namespace Test {
-  export let a = 1
-  export const add = (a: number, b: number) => a + b
-  export namespace Fn {
-    export function foo() {
-      console.log("foo!")
-    }
-  }
-}
-// 同名的命名空间会合并
-export namespace Test {
-  export function nowDate() {
-    console.log(new Date())
-    return new Date()
-  }
-}
-console.log(Test.a, Test.add(1, 23))
-Test.Fn.foo()
-Test.nowDate()
-const defaultA = "32451"
-const checkNumber = new ZipCodeValidator()
-checkNumber.isAcceptable(defaultA)
-```
-
-#### 混入
-
-#### 迭代器和生成器
-
-#### 装饰器
-
-#### 声明文件
-
-#### tscofing.json 配置项
-
-#### 三斜线指令
-
-> 三斜杠指令是包含单个 XML 标记的单行注释，注释的内容用作编译器指令。
-> 有且只有在其包含文件的顶部有效，之前只能有注释或者其他的三斜杠指令。
-
-**常用：**
-
-1. <reference path="..." /> `<reference path="..." />` 用作文件之间依赖的声明
-2. <reference types="..." /> `<reference types="..." />` 用作声明对包的依赖, 该文件使用 @types/xxx/index.d.ts 中声明的名称
-3. <reference lib="..." /> `<reference lib="..." />` 指令允许文件显式包含现有的内置 lib 文件
-
-```TypeScript
-/// <reference path="../../namespace/validation.ts" />
-/// <reference types="express" />
-/// <reference lib="ES2017.string" />
-/// <reference lib="DOM" />
-namespace Validation {
-  const letterRegExp = /^[A-Za-z]+$/
-  export class LettersOnlyValidator implements StringValidator {
-    isAcceptable(s: string): boolean {
-      return letterRegExp.test(s)
-    }
-  }
-}
-const userName = "abcUIO"
-const validator = new Validation.LettersOnlyValidator()
-console.log(validator.isAcceptable(userName))
-console.log("foo".padStart(10, "*"))
-// const el: HTMLSpanElement = document.createElement("span")
-```
-
-4. `<amd-module name="" />` amd-module指令允许将可选模块名称传递给编译器
-   `other.ts`
-
-```TypeScript
-
-```
+> 当前版本v5.5
+>
+> 1. [TypeScript](https://www.typescriptlang.org/)
+> 2. [小满zs的TypeScript的收藏集](https://blog.csdn.net/qq1195566313/category_11559497.html?spm=1001.2014.3001.5515)
+>    训练场：[TypeScript Playground](https://www.typescriptlang.org/play/)
+>    安装
+>
+> ```bash
+> // 项目内安装
+> npm install typescript --save-dev
+> // 全局安装
+> npm install -g typescript
+> // 安装其他依赖
+> /**
+>   * 1. @types/node -- 支持node.js环境
+>   * 2. ts-node -- 可以直接运行TypeScript文件
+>   */
+> npm install @types/node @ts-node -D
+> ```
+> ## 类型
+>
+> #### 基础类型
+>
+> ```Typescript
+> // string  
+> // number  
+> // bigint  
+> // boolean  
+> // null  
+> // undefined  
+> const teacherName: string = "Dell";  
+> const count: number = 123;  
+> const population: bigint = BigInt("1234567890123456789012345678901234567890");  
+> const flag: boolean = true  
+> const a: null = null;  
+> const b: undefined = undefined;
+> ```
+> **symbol 类型**
+> [学习TypeScrip13（symbol类型）](https://xiaoman.blog.csdn.net/article/details/122463630)
+>
+> #### 任意类型
+>
+> * **any 类型**
+>
+>> any 类型代表任何值，但会失去TypeScript类型检测的作用
+>>
+>
+> * **unknown 类型**
+>
+>> unknown 类型代表任何值，但使用 unknown 类型的值做任何事情都是不合法的。这类似于 any 类型，但更安全
+>>
+>
+> ```TypeScript
+> function f1(a: any) {
+> 	a.b(); // OK
+> }
+> function f2(a: unknown) {
+> 	a.b(); // 'a' is of type 'unknown'.
+> }
+> ```
+> * any 和 unknown 的区别？
+>
+> 1. 使用 any 做任何事情都是合法的，使用 unknown 类型的值做任何事情都是不合法的
+> 2. unknown 类型 是 top type，不能作为子类型，但 any 类型没有这个问题
+>
+> ```TypeScript
+> // 这样写会报错unknow类型不能作为子类型只能作为父类型 any 可以作为父类型和子类型
+> // unknown类型不能赋值给其他类型
+> let name1: unknown = '123'
+> let name2: string = name1 
+> // 这样就没问题 any类型是可以的
+> let name3: any = '123'
+> let name4: string = name3
+> ```
+> #### 字面类型
+>
+> TODO
+>
+> #### 接口与对象类型
+>
+> * **接口类型**
+>
+>> 可以通过 interface 关键字约束对象类型
+>>
+>
+> ```TypeScript
+> // ?. 可选  
+> // readonly 只读  
+> // [xxx: 类型] 任意类型  
+> interface Person {
+> 	name: string
+>     age?: string,  
+>     readonly birthDay: string,  
+>     [propName: string]: any,  
+>     fn(): void,  
+> }
+> // 使用 extends
+> interface Teacher extends Person {
+> 	school: string,
+> 	teachAge: number
+> }
+> let tom: Teacher = {
+> 	name: 'tom',
+> 	age: 24,
+> 	birthDay: "2000-09-08",
+> 	school: 'xxx中学',
+> 	teachAge: 2,
+> 	fn() {
+> 		console.log('fn')
+> 	},
+> }
+> ```
+> * **对象类型**
+>
+>> 特殊类型 object 指的是任何非基础值（ string、number、bigint、boolean、symbol、null 或 undefined）。这与空对象类型 { } 不同，也与全局类型 Object 不同。你很可能永远不会使用 Object。
+>>
+>
+> #### 数组和元组类型
+>
+> * **数组类型**
+>
+> ```TypeScript
+> // 类型[]  
+> // arguments类数组: IArguments  
+> // 泛型数组  
+> let arr: number[] = [1, 2, 3, 4]  
+> let arr2: (number | string)[] = [1, "2", 3, "ok"]
+> function fn(...args: number[]) {  
+>     return arguments  
+> }
+> let arr3: Array<string> = ['1', '2', '3']  
+> // IArguments 是 TypeSCript 已经定义好的 => 类似：  
+> interface IArguments {  
+>     [index: number]: any;  
+>     length: number;  
+>     callee: Function;  
+> }
+> ```
+> * **元组类型**
+>
+>> 元组（Tuple）是固定数量的不同类型的元素的组合
+>>
+>
+> ```TypeScript
+> const teacherInfo: [string, string, number] = ["Dell", "Alice", 88];  
+> const teacherInfo: readonly [string, string, number, number, boolean] = ["Tom", "male", 28, 5, true];
+> ```
+>> 应用场景：csv格式的数据等，示例：
+>>
+>
+> ```TypeScript
+> const teacherList: [string, string, number][] = [
+>   ["dell", "male", 18],
+>   ["sun", "female", 22],
+>   ["jeny", "female", 28],
+> ]
+> ```
+> #### never和void类型
+>
+> * **never类型**
+>
+>> TypeScript 将使用 never 类型来表示不应该存在的状态
+>>
+>
+> ```TypeScript
+> function error(message: string): never  {  
+>     throw new Error(message)  
+> }
+> function loop(): never {  
+>     while(true){}  
+> }
+> ```
+> <u>应用场景</u>:
+> ...
+>
+> * **void类型**
+>
+>> 表示不返回值的函数的返回值，只要函数没有任何 `return` 语句，或者没有从这些返回语句返回任何显式值，它就是推断类型
+>>
+>
+> ```TypeScript
+> function log(msg): void {  
+>     console.log(msg)  
+> }
+> ```
+> #### 枚举类型
+>
+> * **特性:**
+>
+> 1. 自增长特性
+>
+>    > 常量成员从第一个成员开始自动递增。如果没有显式地为成员赋值，它将从 0 开始，并且后续的成员会自动递增。
+>    >
+>
+>    ``````typescript
+>    enum Direction {  
+>    	North, // 0  
+>    	East,  // 1  
+>    	South, // 2  
+>    	West   // 3  
+>    }  
+>    enum Colors {  
+>    	red = 1,  
+>    	green = "abc",  
+>    	orange = 3,  
+>    	pink, // 4  
+>    	blue, // 5  
+>    }
+>    ``````
+> 2. 反向映射特性
+>
+>    > 除了为成员创建具有属性名称的对象外，**数字枚举成员**还获得从枚举值到枚举名称的反向映射。
+>    >
+>
+>    ```typescript
+>    enum Enum {  
+>      A, // 0  
+>    }  
+>    let a = Enum.A;  
+>    let nameOfA = Enum[a];
+>    ```
+>
+> * **场景：**
+>
+>   - 数字枚举
+>
+>   ```TypeScript
+>   enum Types {  
+>   	Red, // 0  
+>   	Green = 5, // 5  
+>   	Blue // 6  
+>   }  
+>   console.log(Types.Red) // 0
+>   ```
+>   - 字符串枚举
+>
+>     > 在一个字符串枚举里，每个成员都必须用字符串字面量，或另外一个字符串枚举成员进行初始化。
+>     >
+>   - 异构枚举
+>
+>     > 枚举可以混合字符串和数字成员
+>     >
+>   - 接口枚举
+>
+>     ```typescript
+>     enum Types {  
+>         yyds,  
+>         dddd  
+>     }  
+>     interface A {  
+>         red: Types.yyds  
+>     }  
+>     let obj: A = {  
+>         red: Types.yyds  
+>     }
+>     ```
+>   - const枚举
+>
+>     > 大多数情况下，枚举是十分有效的方案。 然而在某些情况下需求很严格。 为了避免在额外生成的代码上的开销和额外的非直接的对枚举成员的访问，我们可以使用 `const`枚举。 常量枚举通过在枚举上使用 const 修饰符来定义。且const 声明编译后为常量。
+>     >
+>
+>     ```typescript
+>     const enum Types {
+>       No = "No",
+>       Yes = 1,
+>     }
+>     ```
+>
+> #### 类型推论和类型别名
+>
+> * **类型推论**
+>
+>   > TypeScript 会在没有明确的指定类型的时候推测出一个类型，这就是**类型推论**当变量被类型推断为一种类型时，不能够在给变量赋值的时候给别的类型如果你声明变量没有定义类型也没有赋值这时候TS会推断成any类型
+>   >
+>
+>   ```ts
+>   let a = "123456" //  被类型推断为string
+>   a = 123456 // 不能将类型“number”分配给类型“string”。ts(2322)
+>   let value // 被类型推断为any
+>   ```
+> * **类型别名**
+>
+>   > 通过 type 使用同一个类型并用一个名称引用它，叫做类型别名
+>   >
+>
+>   ```ts
+>   // 基础用法
+>   type str = string
+>   type strFn = () => string
+>   type strOrNum = string | number
+>   type success = 'ok' | 1 | true
+>   type FnType = {
+>       name: string,
+>       age: number,
+>       sex: string,
+>       teachAge: number,
+>   }
+>   ```
+>
+> <u>类型别名 type 和接口 interface 的区别：</u>
+>
+> 1. type不能重复命名，重复命名 interface 会合并
+> 2. interface 用于约束对象（函数也属于对象），type 没有这个限制
+> 3. 将两个及其以上的类型合并时，interface 往往通过继承来实现（也可以通过交叉类型&），而 type 通过联合类型|来实现
+> 4. type 可以定义联合类型和可以使用一些操作符，而 interface 不行
+>
+> ```TypeScript
+> // 重复命名的区别
+> // 类型别名不能重复命名
+> type abc = number
+> type abc = string  // Duplicate identifier 'abc'.(2300)
+> // 重复命名 interface 会合并
+> interface FooFn {
+>     school: string,
+>     info: object,
+> }
+> interface FooFn {
+>     age: number
+> }
+> let highSchool: FooFn = {
+>     school: "xxx中学",
+>     info: {  
+>     },
+>     age: 12
+> }
+> // 类型合并的区别
+> interface Person {
+>     name: string,
+>     age: number,
+> }
+> interface Teacher extends Person {
+>     school: string,
+>     teachAge: number
+> }
+> type personType = {
+>     name: string,
+>     age: number,
+> }
+> type teacherType = {
+>     school: string,
+>     teachAge: number
+> } & personType
+> let tom: Teacher = {
+>     name: 'tom',
+>     age: 27,
+>     school: "xxx",
+>     teachAge: 4
+> }
+> let mary: teacherType = {
+>     name: 'mary',
+>     age: 34,
+>     school: 'xxx',
+>     teachAge:9
+> }
+> // type 使用操作符
+> let random1 = 1
+> // 获取变量的类型
+> type n = typeof random1
+> // 获取interface的属性名 
+> type keyOfType = keyof Teacher // "name" | "age" | "school" | "teachAge"
+> type IsNumber<T> = T extends number ? true : false
+> class NewNumber extends Number {}
+> let result: IsNumber<NewNumber> = false; // 只能是false
+> console.log(result)
+> ```
+> #### 联合类型和交叉类型
+>
+> * **联合类型**
+>
+>   > 联合类型是由两种或多种其他类型组成的类型，表示可能是这些类型中的任何一种的值。我们将这些类型中的每一种都称为联合的成员。
+>   >
+>
+>   ```ts
+>   let a: number | string = "123"
+>   a = 123
+>   function printId(id: number | string) {
+>   	console.log("Your ID is: " + id);
+>   }
+>   printId("202")
+>   printId(101)
+>   ```
+>
+> 如果你有一个联合类型的值，你如何处理它？TypeScript 只有在对联合的每个成员都有效的情况下才允许操作。例如，如果你有联合 string | number，则不能使用仅在 string 上可用的方法：
+>
+> ```TypeScript
+> function printId(id: number | string) {
+> 	console.log(id.toUpperCase()) // 将会报错
+> }
+> ```
+> 通过TypeScript的类型推论来缩小联合，比如：
+>
+> ```TypeScript
+> function printId(id: number | string) {
+> 	if(typeof id === "string") {
+> 		console.log(id.toUpperCase());
+> 	} else {
+> 		console.log(id)
+> 	}
+> }
+> ```
+> * **交叉类型**
+>
+>   > 交叉类型是使用 & 运算符定义的
+>   >
+>
+>   ```ts
+>   interface Colorful {
+>   	color: string;
+>   }
+>   interface Circle {
+>   	radius: number;
+>   }
+>   type ColorfulCircle = Colorful & Circle
+>   function draw(obj: ColorfulCircle) {
+>   	console.log(obj.color, obj.radius)
+>   }
+>   draw({ color: 'red', radius: 10 })
+>   // 理论上可以通过交叉类型把类型别名和接口进行混用,但可读性有点不好 - 只要明白你在做什么就行.png
+>   // 数组和字符串都有slice方法，所以下面的交集类型 b 是有效的
+>   type a = any[] | string
+>   interface fnType {
+>       slice: Function
+>   }
+>   type b = a & fnType
+>   let c: b = [1, 2, 3, 4]
+>   console.log(c.slice(2))
+>   ```
+>
+> #### 类型断言
+>
+>> 有时候，你非常清楚一个值的类型信息但TypeScript无法知道的值类型的信息，这时候就可以`as`使用**类型断言**
+>>
+>
+> ```TypeScript
+> // 当你清楚获取的元素必然是 HTMLCanvasElement
+> const myCanvas = document.getElementById("main_canvas") as HTMLCanvasElement;
+> // 类型断言的另一种写法（尖括号写法）
+> interface Person { name: string; age: number; } 
+> let people: any[] = [ 
+> 	{ name: "Alice", age: 25 }, 
+> 	{ name: "Bob", age: 30 }, 
+> 	{ name: "Charlie", age: 35 } 
+> ];
+> let names:string[] = people.map(person => (<Person>person).name);
+> console.log(names);
+> // 当TypeScript明确知道（类型推论）一个值的类型时使用类型断言将会报错
+> // Conversion of type 'number' to type 'boolean' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.(2352)
+> const value = 123 as boolean 
+> // 当你故意将一种类型断言为另一种类型时，这其实是在欺骗TypeScript，没有任何意义
+> function fn(param: any): boolean {
+> 	return param as boolean
+> }
+> console.log(fn('123'))
+> ```
+>> TypeScript 只允许类型断言转换为更具体或更不具体的类型版本。
+>> 有时，此规则可能过于保守，并且不允许可能有效的更复杂的强制转换。如果发生这种情况，你可以使用两个断言，然后是所需的类型：
+>>
+>
+> ```TypeScript
+> // declare 是 TypeScript 中用于声明类型和接口、模块、全局变量和函数等。
+> declare const expr: any;
+> type T = { a: 1, b: 2, c:3 };
+> const a = expr as any as T; // 或者 expr as unknown as T
+> ```
+> 使用类型断言缩小类型
+>
+> ```TypeScript
+> interface A {
+> 	run: string
+> }
+> interface B {
+> 	build: string
+> }
+> function fn(type: A | B): void {
+> 	console.log((type as A).run);
+> }
+> ```
+>> 类型断言编译后被编译器删除，不会影响代码的运行时行为。
+>>
+>
+> **非空断言运算符 !**
+>
+>> 用于告诉编译器某个表达式不会是 null 或 undefined。当你确定某个值一定不会是 `null` 或 `undefined` 时，可以使用这个运算符来避免编译器发出错误或警告。
+>>
+>
+> ```TypeScript
+> interface User {
+>     name?: string;
+>     age?: number;
+> }
+> const getUser = (): User => {
+>     return { name: "John", age: 30 };
+> };
+> const user = getUser();
+> const userName = user.name!;
+> console.log(userName.toUpperCase()); // 输出: John
+> ```
+> #### 泛型
+>
+>> 也称之为"动态类型"
+>>
+>
+> ```TypeScript
+> function returnArray<T>(a: T, b: T): Array<T> {
+> 	return [a, b]
+> }
+> // 使用类型参数推断
+> returnArray(1, 2)
+> returnArray('tom', 'bob')
+> // 传递类型参数
+> returnArray<number | string>(1, '2')
+> // 使用多个参数
+> function logLen<T, K, L>(param1: T[], param2: K[], param3: L[]): number {
+>     return ([] as any[]).concat(param1).concat(param2).concat(param3).length
+> }
+> logLen(['q', 'w', 'e', 'r'], [ 98, 103, 42, 5], [false, true, false])
+> // 使用泛型参数默认值，为什么有默认值？
+> function getRandomValue<T = number>(params: T[]): T {
+> 	return Math.round(Math.random() * params.length)
+> }
+> // 在类型别名和接口中使用泛型
+> type A<T> = number | string | T
+> interface Box<T> {
+> 	content: T,
+> 	size: number
+> }
+> let abc: A<boolean> = true
+> let stringBox: Box<string> = {
+> 	content: "Hello World!",
+> 	size: 10
+> }
+> // 使用泛型类
+> class GenericBox<T> {
+>     constructor(private content: T) {};
+>     getContent(): T {
+>         return this.content
+>     }
+>     setContent(value: T): void {
+>         this.content = value
+>     }
+> }
+> ```
+> TODO： TypeScript 类型推断泛型？
+> **泛型类型**
+> TODO
+> **泛型的类型约束**
+>
+>> 意思是泛型受到约束
+>>
+>
+> ```TypeScript
+>
+> // 通过 extends 继承父类来实现约束
+> function slice<T extends String | any[]>(param: T) {
+>     return param.slice(0, Math.floor(param.length / 2))
+> }
+> slice('3.1415926')
+> slice(['q', 'w', 'e', 'r', 't', 'y'])
+> interface Point {
+> 	x: number,
+> 	y: number
+> }
+> // 通过接口来类型约束
+> function getPointDistance<T extends Point>(point1: T, point2: T): number {
+> 	return Math.sqrt(Math.pow(point1.x - point2.x) + Math.pow(point1.y - point2.y))
+> }
+> // 在泛型约束中使用类型参数 
+> // keyof 运算符采用对象类型并生成其键的字符串或数字字面联合
+> function getValue<T extends object, K extends keyof T>(obj: T, arttribute: K) {
+> 	return obj[arttribute]
+> }
+> ```
+> ## 函数和类
+>
+> #### 函数扩展
+>
+> * **函数参数**
+>
+>   ```ts
+>   // 1. 参数不能多传，也不能少传 必须按照约定的类型来
+>   // 2. 函数可选参数?
+>   // 3. 函数参数的默认值
+>   function fn(name: string, age:number, teachAge?: number, isMale: boolean = true，callback: Function): string {
+>   	callback()
+>   	return name + age
+>   }
+>   // 剩余参数
+>   function foo(...args: any[]): string {
+>   	return args.join("")
+>   }
+>   const a = [2, "babana", 32, "kebi"]
+>   console.log(foo(...a))
+>   // 参数解构
+>   function getMaxValue({ value1, value2, value3 }: { value1: number, value2: number, value3: number}): number {
+>   	return Math.max(value1, value2, value3)
+>   }
+>   // 使用箭头函数
+>   const getTotal: (...params: number[]) => number = (...params) => {
+>   	return params.reduce((x, y) => x + y, params[0]);
+>   }
+>   const getTotal2 = (...params:  number[]): number => {
+>   	return params.reduce((x, y) => x + y, params[0]);
+>   }
+>   ```
+> * **接口定义函数**
+>
+>   ```ts
+>   // 定义参数 num 和 num2  ：后面定义返回值的类型
+>   // 只能用于箭头函数上面
+>   interface Add {
+>       (num:  number, num2: number): number
+>   }
+>   const fn: Add = (num: number, num2: number): number => {
+>       return num + num2
+>   }
+>   fn(5, 5)
+>   // 定义函数参数和返回值
+>   interface User{
+>       name: string;
+>       age: number;
+>   }
+>   function getUserInfo(user: User): User {
+>     return user
+>   }
+>   ```
+> * **函数重载**
+>
+>   > 重载是方法名字相同，而参数不同，返回类型可以相同也可以不同。
+>   > 可以通过编写**重载签名**来指定一个可以以不同方式调用的函数，然后通过编写**函数主体**来实现签名
+>   > **实现签名还必须与重载签名兼容**。但如果TypeScript没有检测出来，将不会报错...
+>   >
+>
+>   ```ts
+>   interface FnType {
+>       [propname: string]: any
+>   }
+>   // 重载签名
+>   function fn(obj: FnType, ...attr: string[]): void
+>   function fn(...params: [string, number, boolean]): void
+>   // 函数主体来实现签名
+>   function fn(...params: any[]): void {
+>       if(typeof params[0] === "string") {
+>           console.log("name:", params[0], "age:", params[1], "is male:", params[2])
+>       } else {
+>           for(let obj = params[0], i = 1; i < params.length; i++){
+>               console.log(obj[params[i]]);
+>           }
+>       }
+>   }
+>   fn('tom', 24, true)
+>   fn({ name: 'mary', 'age': 32}, 'name', 'age')
+>   ```
+> * **使用this**
+>   TODO
+>
+> #### 类
+>
+>> 关键字：[class](https://web.nodejs.cn/en-us/docs/web/javascript/reference/classes/)
+>> ES6提供了更接近传统语言的写法，引入了Class（类）这个概念，作为对象的模板。通过class关键字，可以定义类。基本上，ES6的class可以看作只是一个语法糖，它的绝大部分功能，ES5都可以做到，新的class写法只是让对象原型的写法更加清晰、更像面向对象编程的语法而已。上面的代码用ES6的“类”改写，就是下面这样。
+>>
+>
+> ```TypeScript
+> // 在TypeScript是不允许直接在constructor 定义变量的 需要在constructor上面先声明
+> class Person {
+> 	name: string;
+> 	age: number
+> 	constructor(name: string, age: number) {
+> 		this.name = name
+> 		this.age = age
+> 	}
+> 	run() {
+> 		console.log(this.name, this.age)
+> 	}
+> }
+> // 可以简写 public 是默认修饰符
+> class Person1 {
+> 	constructor(public name: string, public age: number) {}
+> 	run() {
+> 		console.log(this.name, this.age)
+> 	}
+> }
+> ```
+> * **类的修饰符**
+>
+>   * public 公共
+>     可以让你定义的变量 内部访问（继承的子类也能访问） 也可以外部访问 如果不写默认就是public
+>
+>     ```ts
+>     class Person {
+>         constructor(public name: string, public age: number) {}
+>         log() {
+>             console.log(this.name, this.age)
+>         }
+>     }
+>     const tom = new Person('Tom', 23)
+>     console.log(tom.log()) // 内部访问
+>     console.log(tom.name, tom.age) // 外部访问
+>     ```
+>   * private 私有
+>     代表定义的变量私有的只能在内部访问 不能在外部访问
+>
+>     ```ts
+>     class Person {
+>         constructor(public name: string, public age: number, private looks: string) {}
+>         log() {
+>             console.log(this.name, this.age)
+>         }
+>         logPrivateLooks() {
+>             console.log(this.looks)
+>         }
+>     }
+>     const tom = new Person('Tom', 23, "good")
+>     console.log(tom.logPrivateLooks()) // 内部访问
+>     console.log(tom.looks) // 属性“looks”为私有属性，只能在类“Person1”中访问。ts(2341)
+>     ```
+>   * protected 保护
+>     代表定义的变量私有的只能在内部和继承的子类中访问 不能在外部访问
+>
+>     ```ts
+>     class Person {
+>         constructor(public school: string, protected name: string, protected age: number, private looks: string) {}
+>         log() {
+>             console.log(this.name, this.age)
+>         }
+>         logSchool() {
+>             console.log(this.school)
+>         }
+>         logPrivateLooks() {
+>             console.log(this.looks)
+>         }
+>     }
+>
+>     class Teacher extends Person {
+>         constructor(school: string, name: string, age: number, looks: string, public teachAge: number) {
+>             super(school, name, age, looks)
+>         }
+>         log() {
+>             super.log()
+>         }
+>         logSchool() {
+>             super.logSchool()
+>         }
+>         logLooks() {
+>           console.log(this.looks)
+>         }
+>     }
+>     const tom = new Teacher('xx中学', 'Tom', 23, 'good', 1)
+>     tom.log() // 在继承的子类中访问父类的 protected 属性
+>     tom.logSchool() // 在继承的子类中访问父类的 public 属性
+>     tom.logLooks() //  在继承的子类中访问父类的 private 属性
+>     ```
+> * **类继承**
+>
+>   > implements 从句
+>   > 通过使用 implements 子句来检查一个类是否满足特定的 interface。如果一个类未能正确实现它，则会触发错误
+>   >
+>
+>   ```ts
+>   // 使用
+>   interface Pingable {
+>     ping(): void;
+>   }
+>   class Socket implements Pingable {
+>     ping () {
+>       console.log("ping!")
+>     }
+>   }
+>   // 通过 implements 子句检查多个接口
+>   interface Depthable {
+>     depth: number
+>   }
+>   class Sonar implements Pingable, Depthable {
+>     depth: number
+>     constructor(depth: number) {
+>       this.depth = depth
+>     }
+>     ping() {
+>       console.log("ping!")
+>     }
+>   }
+>   // implements 子句检查类是否满足于特定的接口，但不会改变类的类型或其方法
+>   interface Userable {
+>     name: string,
+>     check(): void,
+>   }
+>   class UserChecker implements Userable {
+>     static checkName: RegExp = /^[A-Za-z0-9]{8,12}$/
+>     name: string
+>     constructor(name: string){
+>       this.name = name
+>     }
+>     check() {
+>       return UserChecker.checkName.test(this.name)
+>     }
+>   }
+>   ```
+> * **extends**
+>
+>   > 关键字介绍：[extends](https://web.nodejs.cn/en-us/docs/web/javascript/reference/classes/extends/)
+>   > 通过extends来创建另一个类的子类
+>   >
+>
+>   ```ts
+>   // 使用
+>   class Person {
+>       a: number
+>       constructor(public name: string) {
+>           this.a = Math.round(Math.random() * 10)
+>       }
+>       move() {
+>           console.log("Moving along!");
+>       }
+>   }
+>
+>   class Eat extends Person {
+>       constructor(public name: string, private readonly food: string) {
+>           super(name)
+>       }
+>       dirnk(times: number) {
+>           for (let i = 0; i < times; i++) {
+>               console.log(`drink ${this.food}`);
+>           }
+>       }
+>   }
+>
+>   const tom = new Eat("tom", "water")
+>   tom.move()
+>   tom.dirnk(3)
+>   console.log(tom)
+>   // 覆盖方法, 需要遵守契约
+>   class Errors {
+>   	print(message: string): void {
+>   		console.log(message)
+>   	}
+>   }
+>   class syntaxError extends Errors {
+>   	print(message: string, type?: string): void | never {
+>   		if(!type) {
+>   			super.print(message)
+>   		} else {
+>   			console.log(`Syntax Error, type: ${type}, info: ${message}`)
+>   		}
+>   	}
+>   }
+>   // 子类通过declare可以声明更准确的类型，仅当 target >= ES2022` 或useDefineForClassFields为 true 时
+>   interface Animal {
+>     dateOfBirth: any;
+>   }
+>   interface Dog extends Animal {
+>     breed: any;
+>   }
+>   class AnimalHouse {
+>     resident: Animal;
+>     constructor(animal: Animal) {
+>       this.resident = animal;
+>     }
+>   }
+>   class DogHouse extends AnimalHouse {
+>     // Does not emit JavaScript code,
+>     // only ensures the types are correct
+>     declare resident: Dog;
+>     constructor(dog: Dog) {
+>       super(dog);
+>     }
+>   }
+>   const a = new DogHouse({ dateOfBirth: "2020", breed: "中华田园犬" })
+>   console.log(a)
+>   ```
+> * **抽象类**
+>
+>   > abstract 所定义的就是抽象类
+>   >
+>
+>   ```ts
+>   // 1. abstract不能用作实例化
+>   // 2. abstract 所定义的方法 只能进行一个描述，不能进行一个实现, 且在派生类中药实现
+>   abstract class B {
+>     constructor(public name?: string) {}
+>     getName() {
+>       return this.name
+>     }
+>     abstract init(name: string): void
+>   }
+>   // 派生类
+>   class React extends B {
+>     constructor() {
+>       super()
+>     }
+>     init(name: string) {}
+>     setName (name: string) {
+>       this.name = name
+>     }
+>   }
+>   const react = new React()
+>   react.setName("guanhai")
+>   console.log(react.getName())
+>   ```
+>
+> ## 其他
+>
+> #### 命名空间
+>
+> TypeScript 中使用命名空间（以前是 “内部模块”）来组织代码的各种方法。
+>
+> 1. 嵌套
+> 2. 抽离
+> 3. 使用别名来简化命名
+> 4. 合并
+>
+> `customValidator.ts`
+>
+> ```TypeScript
+> export namespace customValidator {
+>   interface StringValidator {
+>     isAcceptable(s: string): boolean
+>   }
+>   export class ZipCodeValidator implements StringValidator {
+>     static checkRegExp =  /^[0-9]{5}$/
+>     isAcceptable(s: string) {
+>       return ZipCodeValidator.checkRegExp.test(s);
+>     }
+>   }
+> }
+> ```
+> `test.ts`
+>
+> ```TypeScript
+> import { customValidator } from "../namespace/customValidator"
+> import ZipCodeValidator = customValidator.ZipCodeValidator
+> export namespace Test {
+>   export let a = 1
+>   export const add = (a: number, b: number) => a + b
+>   export namespace Fn {
+>     export function foo() {
+>       console.log("foo!")
+>     }
+>   }
+> }
+> // 同名的命名空间会合并
+> export namespace Test {
+>   export function nowDate() {
+>     console.log(new Date())
+>     return new Date()
+>   }
+> }
+> console.log(Test.a, Test.add(1, 23))
+> Test.Fn.foo()
+> Test.nowDate()
+> const defaultA = "32451"
+> const checkNumber = new ZipCodeValidator()
+> checkNumber.isAcceptable(defaultA)
+> ```
+> #### 混入
+>
+> #### 迭代器和生成器
+>
+> #### 装饰器
+>
+> #### 声明文件
+>
+> #### tscofing.json 配置项
+>
+> #### 三斜线指令
+>
+>> 三斜杠指令是包含单个 XML 标记的单行注释，注释的内容用作编译器指令。
+>> 有且只有在其包含文件的顶部有效，之前只能有注释或者其他的三斜杠指令。
+>>
+>
+> **常用：**
+>
+> 1. <reference path="..." /> `<reference path="..." />` 用作文件之间依赖的声明
+> 2. <reference types="..." /> `<reference types="..." />` 用作声明对包的依赖, 该文件使用 @types/xxx/index.d.ts 中声明的名称
+> 3. <reference lib="..." /> `<reference lib="..." />` 指令允许文件显式包含现有的内置 lib 文件
+>
+> ```TypeScript
+> /// <reference path="../../namespace/validation.ts" />
+> /// <reference types="express" />
+> /// <reference lib="ES2017.string" />
+> /// <reference lib="DOM" />
+> namespace Validation {
+>   const letterRegExp = /^[A-Za-z]+$/
+>   export class LettersOnlyValidator implements StringValidator {
+>     isAcceptable(s: string): boolean {
+>       return letterRegExp.test(s)
+>     }
+>   }
+> }
+> const userName = "abcUIO"
+> const validator = new Validation.LettersOnlyValidator()
+> console.log(validator.isAcceptable(userName))
+> console.log("foo".padStart(10, "*"))
+> // const el: HTMLSpanElement = document.createElement("span")
+> ```
+> 4. `<amd-module name="" />` amd-module指令允许将可选模块名称传递给编译器
+>    `other.ts`
+>
+> ```TypeScript
+>
+> ```

@@ -116,6 +116,17 @@ class UserChecker implements Userable {
   }
 }
 
+// 索引签名
+class MyClass {
+  // 和其他对象的索引签名一样
+  [s: string]: boolean | ((s: string) => boolean);
+  
+  check(s: string) {
+    return this[s] as boolean;
+  }
+}
+
+
 //类的修饰符
 // public 公共
 // 可以让你定义的变量 内部访问（继承的子类也能访问） 也可以外部访问 如果不写默认就是public
@@ -213,3 +224,76 @@ class React extends B {
 const react = new React()
 react.setName("guanhai")
 console.log(react.getName())
+
+
+// this 类型
+class Box {
+  contents: string = ""
+  set(value: string) {
+    this.contents = value
+    return this
+  }
+  sameAs(other: this) {
+    return other.contents === this.contents
+  }
+}
+
+class ClearableBox extends Box {
+  clear() {
+    this.contents = "";
+  }
+}
+
+class DerivedBox extends Box {
+  otherContent: string = "?"
+}
+
+// 在类中，一种称为 this 的特殊类型动态地引用当前类的类型。
+const a = new ClearableBox();
+const b = a.set("hello");
+const base = new Box();
+const derived = new DerivedBox();
+// “Box”类型的参数不可分配给“DerivedBox”类型的参数。
+// 类型“Box”中缺少属性“otherContent”，但类型“DerivedBox”中需要属性。
+// derived.sameAs(base)
+
+
+// this 型类型保护
+class FileSystemObject {
+  isFile(): this is FileRep {
+    return this instanceof FileRep
+  }
+  isDirectory(): this is Directory {
+    return this instanceof Directory
+  }
+  isNetWorked(): this is NetWorked & this {
+    return this.networked;
+  }
+  constructor(public path:string, private networked: boolean) {}
+}
+
+class FileRep extends FileSystemObject {
+  constructor(path: string, public content: string) {
+    super(path, false)
+  }
+}
+class Directory extends FileSystemObject {
+  children!: FileSystemObject[];
+}
+interface NetWorked {
+  host: string
+}
+const fso: FileSystemObject = new FileRep('foo/bar.txt', "foo")
+
+// 通过this类型保护 来对特定字段进行延迟验证
+class Ball<T> {
+  value?: T;
+  hasValue(): this is { value: T } {
+    return this.value !== undefined
+  }
+}
+const basketball = new Ball<string>()
+basketball.value = 'game boy!'
+if(basketball.hasValue()) {
+  console.log(basketball.value)
+}
