@@ -16,7 +16,6 @@
       "ES2015",
       "ScriptHost",
       "ES2019.Array",
-      "ES2017.String",
     ],
     // 允许编译器编译JS，JSX文件
     "allowJs":false,

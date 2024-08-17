@@ -16,7 +16,3 @@ router.get('/api', (_: any, res: any) => {
 app.listen(9001, () => {
   console.log('9001')
 })
-
-xxx("abcdef")
-abc
-new Angular()

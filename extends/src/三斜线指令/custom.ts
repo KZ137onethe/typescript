@@ -1,24 +1,30 @@
-import {CustomError, APIError} from './customError';
+/// <reference lib="dom" />
 
-function riskyOperation(value: number) {
+const customError = await import("http://192.168.1.4:8081/lib/customError.js") as CustomError
+function riskyOperation(value: number): never | number {
   if (value < 0) {
-    throw new CustomError("Value must be non-negative", 1001);
+    new customError.Def("Value must be non-negative");
   }
-  return Math.sqrt(value);
+  return Math.sqrt(value)
+}
+
+function randomInteger() {
+  const s = Math.random() > 0.5 ? 1: -1
+  const val = Math.floor(Math.random() * 100)
+  return s * val
 }
 
 async function fetchData(url: string) {
   try {
     const response = await fetch(url);
     if (!response.ok) {
-      throw new APIError("Failed to fetch data", response.status);
+      throw new customError.Api("Failed to fetch data", response.status);
     }
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    if (error instanceof APIError) {
+    if (error instanceof customError.Api) {
       console.error("API Error:", error.toString());
-    } else if (error instanceof CustomError) {
+    } else if (error instanceof customError.Def) {
       console.error("Custom Error:", error.toString());
     } else {
       console.error("Unknown Error:", error);
@@ -26,21 +32,24 @@ async function fetchData(url: string) {
   }
 }
 
-try {
-  console.log(riskyOperation(9)); // 输出: 3
-  console.log(riskyOperation(-5)); // 抛出错误
-} catch (error) {
-  if (error instanceof CustomError) {
-    console.error(error.toString());
-  } else {
-    console.error("An unknown error occurred:", error);
+// 主程序逻辑
+(async () => {
+  try {
+    const value = randomInteger();
+    console.log(value, riskyOperation(value));
+  } catch (error) {
+    if (error instanceof customError.Def) {
+      console.error(error.toString());
+    } else {
+      console.error("An unknown error occurred:", error);
+    }
   }
-}
-
-fetchData("https://dog.ceo/api/breed/pembroke/images/random")
-.then(data => {
-  console.log("Data:", data);
-})
-.catch(error => {
-  console.error("Fetch failed:", error);
-});
+  
+  fetchData("https://dog.ceo/api/breed/pembroke/images/random")
+  .then(data => {
+    console.log("Data:", data);
+  })
+  .catch(error => {
+    console.error("Fetch failed:", error);
+  });
+})();
