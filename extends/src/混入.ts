@@ -20,10 +20,10 @@ let QingQuanSchool: SchoolInfo = {
 }
 
 let tom: Person = {
-  name: "Tom",
+  name: 'tom',
   age: 22,
-  sex: "man",
-  work_location_index: 1
+  sex: 'man',
+  work: 1
 }
 
 // ...扩展运算符, 浅拷贝 将返回新的类型

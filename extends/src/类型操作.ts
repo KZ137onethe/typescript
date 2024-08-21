@@ -1,5 +1,7 @@
 // Header title: keyof 操作符
 // keyof 运算符采用对象类型并生成其键的字符串或数字字面联合
+import * as events from "events";
+
 type Point = { x: number, y: number }
 type P = keyof Point // 等同于 type P = "x" | "y"
 
@@ -141,3 +143,84 @@ type StrArrOrNumArr = ToArray<string | number> // string[] | number[]
 // 想避免非期望行为时，可以将extends关键字的左右两侧括起来
 type ToArrayNonDist<Type> = [Type] extends [any] ? Type[] : never
 type ArrOfStrOrNum = ToArrayNonDist<string | number> // (string | number)[]
+
+// Header title: 映射类型
+// 映射类型建立在索引签名的语法之上，用于声明未提前声明的属性类型
+type OptionsFlags<Type> = {
+  [Property in keyof Type]: boolean;
+}
+
+type Features = {
+  darkMode: () => void,
+  newUserProfile: () => void
+}
+type FeatureOptions = OptionsFlags<Features>;
+
+// 映射修饰符
+// 映射期间可以应用两个额外的修饰符：readonly 和 ? 分别影响可变性和可选性。你可以通过添加前缀 - 或 + 来移除或添加这些修饰符。如果你不添加前缀，则假定为 +。
+type createMutable<Type> = {
+  -readonly [Property in keyof Type]: Type[Property]
+}
+type Concrete<Type> = {
+  [Property in keyof Type]-?: Type[Property]
+}
+
+type LockedAccount = {
+  readonly id: string
+}
+type UnlockedAccount = createMutable<LockedAccount> // { id: string }
+type MaybeUser = {
+  id: string,
+  name?: string,
+  age?: string
+}
+type User = Concrete<MaybeUser>
+
+// > TypeScript 4.1，可以使用映射类型中的 as 子句重新映射映射类型中的键
+type Getters<Type> = {
+  [Property in keyof Type as `get${Capitalize<string & Property>}`]: () => Type[Property]
+}
+interface Person1 {
+  name: string,
+  age: number,
+  location: string,
+}
+type LazyPerson = Getters<Person1>
+// =>　LazyPerson = { getName: () => Person1['name'], getAge: () => Person1['age'], getLocation: () => Person1['location'] }
+type RemoveKindField<Type> = {
+  [Property in keyof Type as Exclude<Property, "kind">]: Type[Property]
+}
+interface Circle {
+  kind: 'circle',
+  radius: number
+}
+type KindLessCircle = RemoveKindField<Circle>
+
+// 你可以映射任意联合，不仅是 string | number | symbol 的联合，还可以映射任何类型的联合
+type EventConfig<Event extends { kind: string }> = {
+  [E in Event as E['kind']]: (event: E) => void
+}
+type SquareEvent = { kind: 'square', x: number, y: number }
+type CircleEvent = { kind: 'circle', radius: number }
+type Config = EventConfig<SquareEvent | CircleEvent>
+
+type ExtractPII<Type> = {
+  [Property in keyof Type]: Type[Property] extends { pii: true } ? true : false
+}
+type DBFields = {
+  id: { format: "incrementing" },
+  name: { type: string, pii: true }
+}
+type ObjectsNeedingGDPRDeletion = ExtractPII<DBFields> // => { id: false, name: true }
+// Header title: 模板字面量类型
+// 建立在字符串字面量上，并且能够通过联合扩展成许多字符串
+// 它们具有与 JavaScript 中的模板字面字符串 相同的语法，但用于类型位置。
+type World = 'world'
+type Greeting = `hello ${World}`
+type EmailLocaleIDs = 'welcome_email' | 'email_heading'
+type FooterLocaleIDs = 'footer_title' | 'footer_sendoff'
+type AllLocaleIDs = `${EmailLocaleIDs | FooterLocaleIDs}_id` // welcome_email_id email_heading_id footer_title_id footer_sendoff_id
+type Lang = 'en' | 'ja' | 'pt'
+type LocaleMessageIDs = `${Lang}_${AllLocaleIDs}`
+
+
