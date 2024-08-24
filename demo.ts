@@ -182,6 +182,8 @@ class Users implements PersonOne {
   say() {
     return "hello";
   }
+  
+  [propName: string]: any;
 }
 
 // 类的定义与继承

@@ -63,42 +63,58 @@ const example = new Example()
 example.test()
 
 // ? 类装饰器
-function sealed<T extends new (...args:any[]) => {}>(constructor: T) {
-  // 这里的语法和下面相同
-  // Object.seal(constructor)
-  // Object.seal(constructor.prototype)
+type colorType = "red" | "green" | "grey" | "yellow";
+
+interface FruitAttrs {
+  color: colorType;
+  createTime: Date;
+}
+
+function isFresh<T extends { new(...args: any[]): {} }>(constructor: T) {
+  const now = Date.now();
+  function getHours(timestamp: number) {
+    return timestamp / 1000 / 60 / 60
+  }
   return class extends constructor {
+    timeDiff: number
     constructor(...args: any[]) {
-      super(...args)
-      // Object.seal 是 JavaScript 中用于防止对象的新属性添加，并且标记现有属性为不可配置（无法删除、新增和重新定义，但是可以修改）
-      Object.seal(this)
+      super(...args);
+      this.timeDiff = Math.ceil(getHours(now - (this as any).createTime.getTime()))
+      if(this.timeDiff > 24) {
+        console.log('no fresh')
+      } else {
+        console.log(`is fresh, time: ${this.timeDiff} hours`)
+      }
+    }
+  };
+}
+
+function source<T extends new (...args: any[]) => {}>(constructor: T){
+  return class extends constructor {
+    source: string
+    constructor(...args: any[]) {
+      super(...args);
+      this.source = '漳州天宝'
     }
   }
 }
 
-function reportableClassDecorator<T extends { new (...args: any[]): {} }>(constructor: T) {
-  return class extends constructor {
-    reportingURL = 'https://www.baidu.com'
+@isFresh
+@source
+class Fruit {
+  name: string;
+  color: colorType;
+  createTime: Date;
+  
+  constructor(name: string, attrs: FruitAttrs) {
+    this.name = name;
+    this.color = attrs.color;
+    this.createTime = attrs.createTime;
   }
 }
 
-@sealed
-@reportableClassDecorator
-class BugReport {
-  type = "report";
-  title: string;
-
-  constructor(t: string) {
-    this.title = t;
-  }
-}
-
-const bug1 = new BugReport('语法错误')
-// bug1.abc = 1 // TS2339: Property abc does not exist on type BugReport
-bug1.title = "syntax error"
-console.log(bug1.title, bug1.type)
-// 如果是bug1.reportingURL, typescript 将会报错
-console.log((bug1 as any).reportingURL)
+const banana = new Fruit('banana', { color: 'yellow', createTime: new Date(Date.UTC(2024, 7, 23, 8, 5, 55)) });
+console.log((banana as any).source)
 
 // ? 方法装饰器
 function enumerable(value: boolean) {
@@ -178,6 +194,14 @@ function validate(target: any, propertyName: string, descriptor: TypedPropertyDe
       }
     }
     return method.call(this, verbose, type)
+  }
+}
+class BugReport {
+  type = "report";
+  title: string;
+  
+  constructor(t: string) {
+    this.title = t;
   }
 }
 class BugLog extends BugReport {
