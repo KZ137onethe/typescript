@@ -55,8 +55,11 @@
     "noImplicitAny": false,
     // 不允许把null、undefined赋值给其他类型的变量
     "strictNullChecks": true,
-    // 不允许函数参数双向协变
-    "strictFunctionTypes": true,
+    /**
+     * 当strictFunctionTypes启用时，TypeScript会对函数参数类型进行更严格的逆变检查。
+     * 当strictFunctionTypes禁用时，TypeScript采用双变（Bivariant）检查，即逆变和协变都被认为是可接受的。
+     */
+    "strictFunctionTypes": false,
     // 类的实例属性必须初始化
     "strictPropertyInitialization": true,
     // 严格的bind/call/apply检查

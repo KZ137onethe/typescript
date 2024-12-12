@@ -33,7 +33,7 @@ function printAll1(strs: string | string[] | null): void {
   }
 }
 
-// 相等性缩小，比如：switch === !== == !=
+  // 相等性缩小，比如：switch === !== == !=
 // 通过相等性缩小来解决 printAll1 函数的问题
 function printAll2(strs: string | string[] | null): void {
   if(strs !== null) {

@@ -1,4 +1,6 @@
-// 动态类型
+/**
+ * 也称：动态类型
+ */
 function fn1(a: number, b: number): Array<number> {
   return [a, b]
 }

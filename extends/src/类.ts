@@ -202,7 +202,7 @@ class MyClass {
 // 基类 或者叫 抽象类
 // abstract 所定义的抽象类
 // abstract 所定义的方法 只能进行一个描述，不能进行一个实现
-abstract class B {
+abstract class frameWork {
   constructor(public name?: string) {}
   getName() {
     return this.name
@@ -211,7 +211,7 @@ abstract class B {
 }
 
 // 派生类
-class React extends B {
+class React extends frameWork {
   constructor() {
     super()
   }
