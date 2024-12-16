@@ -1420,11 +1420,114 @@ for(let s of strings) {
    }
    ```
 
+#### 型变
+
+参考视频：[超细致讲解TypeScript中的型变：协变、逆变、双向协变、不变](https://www.bilibili.com/video/BV1HY4111764/?spm_id_from=333.337.search-card.all.click&vd_source=1c6268f99220acd2592c93a3a87cbe31)
+
+参考文档：[TypeScript 的协变、逆变、双向协变、不变](https://hiyangguo.com/typescript-variant/)
+
+**型变：**
+
+TypeScript相对JavaScript，保证了类型安全，也就是变量只能赋予同类型的值，对象只能访问它自有的属性或者方法。
+
+```typescript
+let b:boolean = true
+let a:number = 0
+a = b // 不能将类型"boolean"的值赋给类型"number"的值
+```
+
+但类型安全也并不是太死板，我们这里提到的"**型变**"，是<u>类型变通</u>的意思，在型变这个概念规则下中不同类型的值是能够赋值的，包含了：**协变**、**逆变**和**双向协变**，也就是下面要介绍的概念。
+
+##### 协变
+
+子类赋值给父类的过程，就是"**协变**"
+
+```typescript
+interface Person {
+    name: string
+}
+interface Student extends Person {
+    age: number
+}
+let variableP: Person = { name: 'tim' }
+let variableS: Student = { name: 'kobe', age: 16 }
+variableP = variableS
+```
+
+##### 逆变
+
+在TypeScript中，函数的参数是**逆变**的，在这种情况下父类型参数可以赋给子类型参数。因为父类索引更少，子类索引更多，下面是一个例子：
+
+```typescript
+interface Person {
+    name: string
+}
+interface Student extends Person {
+    age: number
+}
+type FunP = (arg: Person) => any;
+type FunS = (arg: Student) => any;
+let funp: FunP = ({ name }) => ({ name });
+let funs: FunS = ({ name, age }) => name.length > age ? true : false;
+funs = funp
+```
+
+但函数的返回值是**协变**的，所以可以这么写：
+
+```typescript
+interface Person {
+    name: string
+}
+interface Student extends Person {
+    age: number
+}
+type FunP_v = (arg: Person) => Student
+type FunS_v = (arg: Student) => Person
+let funp_v: FunP_v = ({ name }) => ({name, age: Math.floor(Math.random() * 10) })
+let funs_v: FunS_v = ({ name, age }) => ({ name })
+
+funs_v = funp_v
+```
+
+##### 双向协变
+
+父类型参数的函数可以赋值给子类型的函数，子类型参数的函数可以赋值给父类型的函数，这种特性成为"**双向协变**"
+
+> 在`typescript 2.x`之后需要将 `tsconfig.json` 中的 `strictFunctionTypes` 设置为 false，则支持双向协变。
+
+```typescript
+namespace BidirectionalCovariance {
+  export class Animal {
+    speak() {
+      console.log('animal sound')
+    }
+  } 
+  export class Dog extends Animal {
+    speak() {
+      console.log('Wang Wang Wang!')
+    }
+    get type() {
+      return '德国牧羊犬'
+    }
+  }
+  export type AnimalHandler = (args: Animal) => any
+  export type DogHandler = (args: Dog) => any
+}
+// example1:
+let _handleAnimal: BidirectionalCovariance.AnimalHandler = (args: BidirectionalCovariance.Animal) => {
+  args.speak()
+}
+let _handleDog: BidirectionalCovariance.DogHandler = (args: BidirectionalCovariance.Dog) => {
+  return args.type
+}
+// tsconfig.json 中 "strictFunctionTypes": false 时，开启双向协变，但是推荐别这么做
+_handleAnimal = _handleDog
+_handleDog = _handleAnimal
+```
+
 #### 工具类型
 
 TypeScript 提供了一些内置的类型工具，用来方便地处理各种类型，以及生成新的类型。TypeScript 内置了 17 个类型工具，可以直接使用。
-
-
 
 * Awaited<Type>
 
